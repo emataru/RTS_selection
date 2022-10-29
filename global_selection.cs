@@ -91,15 +91,16 @@ public class global_selection : MonoBehaviour
                 p2 = Input.mousePosition;
                 corners = getBoundingBox(p1, p2);
 
+                var plane = new Plane(-Camera.main.transform.forward, 50000.0f);
                 foreach (Vector2 corner in corners)
                 {
                     Ray ray = Camera.main.ScreenPointToRay(corner);
-
-                    if (Physics.Raycast(ray, out hit, 50000.0f, (1 << 8)))
+                    if(plane.Raycast(ray, out var enter))
                     {
-                        verts[i] = new Vector3(hit.point.x, hit.point.y, hit.point.z);
-                        vecs[i] = ray.origin - hit.point;
-                        Debug.DrawLine(Camera.main.ScreenToWorldPoint(corner), hit.point, Color.red, 1.0f);
+                        var hp = ray.GetPoint(enter);
+                        verts[i] = new Vector3(hp.x, hp.y, hp.z);
+                        vecs[i] = ray.origin - hp;
+                        Debug.DrawLine(Camera.main.ScreenToWorldPoint(corner), hp, Color.red, 1.0f);
                     }
                     i++;
                 }
